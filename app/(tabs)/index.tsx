@@ -7,12 +7,20 @@ export default function HomeScreen() {
   const [note, setNote] = useState("");
 
   const [expenses, setExpenses] =
-    useState<string[]>([]);
+    useState<
+    {
+      id:number;
+      note:string;
+      amount:string;
+    }[]>([]);
 
   function addExpense() {
 
-    const newExpense =
-      `${note} — £${amount}`;
+    const newExpense = {
+      id: Date.now(),
+      note: note,
+      amount: amount
+    };
 
     setExpenses([
       ...expenses,
@@ -24,15 +32,13 @@ export default function HomeScreen() {
   }
 
   // Calculate Total Spending
-  const total =
-    expenses.reduce((sum, item) => {
+    const total =
+  expenses.reduce((sum, item) => {
 
-      const price =
-        Number(item.split("£")[1]) || 0;
+    return sum +
+      Number(item.amount);
 
-      return sum + price;
-
-    }, 0);
+  },0);
 
   return (
 
@@ -83,24 +89,43 @@ export default function HomeScreen() {
         onPress={addExpense}
       />
 
-      {expenses.map((item, index) => (
+      {expenses.map((item) => (
 
-        <Text
-          key={index}
-          style={{
-            marginTop: 20,
-            fontSize: 22
-          }}
-        >
-          {item}
+      <View
+        key={item.id }
+        style={{
+          flexDirection:"row",
+          justifyContent:"space-between",
+          marginTop:20
+        }}
+      >
+
+        <Text style={{fontSize:22}}>
+          {item.note} — £{item.amount}
         </Text>
+
+        <Button
+          title="REMOVE"
+          onPress={() => {
+
+            setExpenses(
+              expenses.filter(
+                expense =>
+                  expense.id !== item.id
+              )
+            );
+
+          }}
+        />
+
+      </View>
 
       ))}
 
       <Text
         style={{
           marginTop: 30,
-          fontSize: 28,
+          fontSize: 25,
           fontWeight: "bold"
         }}
       >
